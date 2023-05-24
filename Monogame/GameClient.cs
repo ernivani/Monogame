@@ -21,7 +21,7 @@ namespace Monogame
         {
             _client = new NetClient(new NetPeerConfiguration("game"));
             _client.Start();
-            _client.Connect("213.32.89.28", 25565);
+            _client.Connect("213.32.89.28", 9999);
 
             base.Initialize();
         }
