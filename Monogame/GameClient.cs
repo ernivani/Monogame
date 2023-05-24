@@ -1,7 +1,9 @@
+using System;
 using Lidgren.Network;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
+using System.Collections.Generic;
 
 namespace Monogame
 {
@@ -10,6 +12,8 @@ namespace Monogame
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
         private NetClient _client;
+        private Dictionary<long, int> playerPositions = new Dictionary<long, int>();
+        private Texture2D playerTexture;
 
         public GameClient()
         {
@@ -29,6 +33,11 @@ namespace Monogame
         protected override void LoadContent()
         {
             _spriteBatch = new SpriteBatch(GraphicsDevice);
+
+            playerTexture = new Texture2D(GraphicsDevice, 10, 10);
+            Color[] data = new Color[10 * 10];
+            for (int i = 0; i < data.Length; ++i) data[i] = Color.White;
+            playerTexture.SetData(data);
         }
 
         protected override void Update(GameTime gameTime)
@@ -39,14 +48,22 @@ namespace Monogame
                 switch (message.MessageType)
                 {
                     case NetIncomingMessageType.Data:
-                        // Traitement des données reçues du serveur
-                        // ...
+                        long id = message.ReadInt64();
+                        int pos = message.ReadInt32();
+                        playerPositions[id] = pos;
+                        System.Diagnostics.Debug.WriteLine($"Received position {pos} for player {id}");
                         break;
                 }
             }
 
-            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
+            var keyboardState = Keyboard.GetState();
+            if (keyboardState.IsKeyDown(Keys.Left))
+                _client.SendMessage(_client.CreateMessage("MOVE_LEFT"), NetDeliveryMethod.ReliableOrdered);
+            else if (keyboardState.IsKeyDown(Keys.Right))
+                _client.SendMessage(_client.CreateMessage("MOVE_RIGHT"), NetDeliveryMethod.ReliableOrdered);
+            else if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
+            
 
             base.Update(gameTime);
         }
@@ -56,20 +73,18 @@ namespace Monogame
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
             _spriteBatch.Begin();
-            // Dessiner le jeu
-            // ...
+            foreach (var player in playerPositions)
+            {
+                _spriteBatch.Draw(playerTexture, new Vector2(player.Value * 10, 0), Color.White);
+                System.Diagnostics.Debug.WriteLine($"Drawing player {player.Key} at position {player.Value * 10}");
+            }
+            // For debugging: Draw a player at a known position
+            _spriteBatch.Draw(playerTexture, new Vector2(100, 100), Color.Red);
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
     }
 
-    public class Program
-    {
-        static void Main(string[] args)
-        {
-            using (var game = new GameClient())
-                game.Run();
-        }
-    }
+    
 }
