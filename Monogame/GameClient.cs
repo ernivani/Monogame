@@ -61,6 +61,11 @@ namespace Monogame
                 _client.SendMessage(_client.CreateMessage("MOVE_LEFT"), NetDeliveryMethod.ReliableOrdered);
             else if (keyboardState.IsKeyDown(Keys.Right))
                 _client.SendMessage(_client.CreateMessage("MOVE_RIGHT"), NetDeliveryMethod.ReliableOrdered);
+            else if (keyboardState.IsKeyDown(Keys.Up))
+                _client.SendMessage(_client.CreateMessage("MOVE_UP"), NetDeliveryMethod.ReliableOrdered);
+            else if (keyboardState.IsKeyDown(Keys.Down))
+                _client.SendMessage(_client.CreateMessage("MOVE_DOWN"), NetDeliveryMethod.ReliableOrdered);
+            
             else if (keyboardState.IsKeyDown(Keys.Escape))
                 Exit();
             

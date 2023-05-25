@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\tlind\\RiderProjects\\Monogame\\Monogame\\Monogame.csproj": {}
+    "C:\\Users\\tlind_ly20i0c\\OneDrive\\Bureau\\dev\\Monogame\\Monogame\\Monogame.csproj": {}
   },
   "projects": {
-    "C:\\Users\\tlind\\RiderProjects\\Monogame\\Monogame\\Monogame.csproj": {
+    "C:\\Users\\tlind_ly20i0c\\OneDrive\\Bureau\\dev\\Monogame\\Monogame\\Monogame.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\tlind\\RiderProjects\\Monogame\\Monogame\\Monogame.csproj",
+        "projectUniqueName": "C:\\Users\\tlind_ly20i0c\\OneDrive\\Bureau\\dev\\Monogame\\Monogame\\Monogame.csproj",
         "projectName": "Monogame",
-        "projectPath": "C:\\Users\\tlind\\RiderProjects\\Monogame\\Monogame\\Monogame.csproj",
-        "packagesPath": "C:\\Users\\tlind\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\tlind\\RiderProjects\\Monogame\\Monogame\\obj\\",
+        "projectPath": "C:\\Users\\tlind_ly20i0c\\OneDrive\\Bureau\\dev\\Monogame\\Monogame\\Monogame.csproj",
+        "packagesPath": "C:\\Users\\tlind_ly20i0c\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\tlind_ly20i0c\\OneDrive\\Bureau\\dev\\Monogame\\Monogame\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\tlind\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\tlind_ly20i0c\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
