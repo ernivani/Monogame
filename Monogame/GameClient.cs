@@ -18,6 +18,7 @@ namespace Monogame
         private Vector2 myPosition;
         private Matrix viewMatrix;
         private KeyboardState oldState;
+        private MouseState oldMouseState;
 
         public GameClient()
         {
@@ -37,7 +38,7 @@ namespace Monogame
             _graphics.ApplyChanges();
             _client = new NetClient(new NetPeerConfiguration("game"));
             _client.Start();
-            _client.Connect("213.32.89.28", 9999);
+            _client.Connect("127.0.0.1", 9999);
             myUniqueId = _client.UniqueIdentifier;
 
             base.Initialize();
@@ -72,7 +73,9 @@ namespace Monogame
                 }
             }
 
-            var newState = Keyboard.GetState();
+            KeyboardState newState = Keyboard.GetState();
+            MouseState mouseState = Mouse.GetState();
+            // handle movement
             if (newState.IsKeyDown(Keys.Left))
                 _client.SendMessage(_client.CreateMessage("MOVE_LEFT"), NetDeliveryMethod.ReliableOrdered);
             if (newState.IsKeyDown(Keys.Right))
@@ -81,8 +84,22 @@ namespace Monogame
                 _client.SendMessage(_client.CreateMessage("MOVE_UP"), NetDeliveryMethod.ReliableOrdered);
             if (newState.IsKeyDown(Keys.Down))
                 _client.SendMessage(_client.CreateMessage("MOVE_DOWN"), NetDeliveryMethod.ReliableOrdered);
-
+            // handle mouse click
+            if (mouseState.RightButton == ButtonState.Pressed)
+            {
+                Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
+                var outmessage = _client.CreateMessage();
+                outmessage.Write("MOVE_TO");
+                float mousePosX = mousePos.X / _graphics.PreferredBackBufferWidth;
+                outmessage.Write(mousePosX);
+                float mousePosY = mousePos.Y / _graphics.PreferredBackBufferHeight;
+                outmessage.Write(mousePosY);
+                _client.SendMessage(outmessage, NetDeliveryMethod.ReliableOrdered);
+            }
+            
+            
             oldState = newState;
+            oldMouseState = mouseState;
 
             if (newState.IsKeyDown(Keys.Escape))
                 Exit();
@@ -104,7 +121,7 @@ namespace Monogame
             foreach (var player in playerPositions)
             {
                 _spriteBatch.Draw(playerTexture, player.Value * 10, Color.White);
-                System.Diagnostics.Debug.WriteLine($"Drawing player {player.Key} at position {player.Value * 10}");
+                //System.Diagnostics.Debug.WriteLine($"Drawing player {player.Key} at position {player.Value * 10}");
             }
             _spriteBatch.End();
 
