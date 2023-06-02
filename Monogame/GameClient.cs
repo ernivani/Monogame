@@ -17,8 +17,6 @@ namespace Monogame
         private long myUniqueId;
         private Vector2 myPosition;
         private Matrix viewMatrix;
-        private KeyboardState oldState;
-        private MouseState oldMouseState;
 
         public GameClient()
         {
@@ -29,9 +27,8 @@ namespace Monogame
 
         protected override void Initialize()
         {
-            _graphics.PreferredBackBufferWidth = 800;  // Set this to your desired width
-            _graphics.PreferredBackBufferHeight = 600;  // Set this to your desired height
-            // allow the window to be resized
+            _graphics.PreferredBackBufferWidth = 800;
+            _graphics.PreferredBackBufferHeight = 600;
             Window.AllowUserResizing = true;
             Window.ClientSizeChanged += OnResize;
 
@@ -59,6 +56,7 @@ namespace Monogame
             NetIncomingMessage message;
             while ((message = _client.ReadMessage()) != null)
             {
+                System.Diagnostics.Debug.WriteLine(message.MessageType);
                 switch (message.MessageType)
                 {
                     case NetIncomingMessageType.Data:
@@ -68,23 +66,14 @@ namespace Monogame
                         Vector2 pos = new Vector2(x, y);
                         playerPositions[id] = pos;
                         if (id == myUniqueId) myPosition = pos;
-                        System.Diagnostics.Debug.WriteLine($"Received position {pos} for player {id}");
+                        
                         break;
                 }
             }
 
             KeyboardState newState = Keyboard.GetState();
             MouseState mouseState = Mouse.GetState();
-            // handle movement
-            if (newState.IsKeyDown(Keys.Left))
-                _client.SendMessage(_client.CreateMessage("MOVE_LEFT"), NetDeliveryMethod.ReliableOrdered);
-            if (newState.IsKeyDown(Keys.Right))
-                _client.SendMessage(_client.CreateMessage("MOVE_RIGHT"), NetDeliveryMethod.ReliableOrdered);
-            if (newState.IsKeyDown(Keys.Up))
-                _client.SendMessage(_client.CreateMessage("MOVE_UP"), NetDeliveryMethod.ReliableOrdered);
-            if (newState.IsKeyDown(Keys.Down))
-                _client.SendMessage(_client.CreateMessage("MOVE_DOWN"), NetDeliveryMethod.ReliableOrdered);
-            // handle mouse click
+
             if (mouseState.RightButton == ButtonState.Pressed)
             {
                 Vector2 mousePos = new Vector2(mouseState.X, mouseState.Y);
@@ -96,15 +85,10 @@ namespace Monogame
                 outmessage.Write(mousePosY);
                 _client.SendMessage(outmessage, NetDeliveryMethod.ReliableOrdered);
             }
-            
-            
-            oldState = newState;
-            oldMouseState = mouseState;
 
             if (newState.IsKeyDown(Keys.Escape))
                 Exit();
-            
-            // Focus the view on the player
+
             viewMatrix = Matrix.CreateTranslation(
                 -myPosition.X + _graphics.PreferredBackBufferWidth / 2,
                 -myPosition.Y + _graphics.PreferredBackBufferHeight / 2,
@@ -121,13 +105,12 @@ namespace Monogame
             foreach (var player in playerPositions)
             {
                 _spriteBatch.Draw(playerTexture, player.Value * 10, Color.White);
-                //System.Diagnostics.Debug.WriteLine($"Drawing player {player.Key} at position {player.Value * 10}");
             }
             _spriteBatch.End();
 
             base.Draw(gameTime);
         }
-        
+
         public void OnResize(Object sender, EventArgs e)
         {
             _graphics.PreferredBackBufferWidth = Window.ClientBounds.Width;
